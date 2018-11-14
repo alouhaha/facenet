@@ -426,7 +426,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame, nrof_fold
     assert(embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
     nrof_thresholds = len(thresholds)
-    k_fold = KFold(n_splits=nrof_folds, shuffle=False)
+    k_fold = KFold(n_splits=nrof_folds, shuffle=True)
     
     tprs = np.zeros((nrof_folds,nrof_thresholds))
     fprs = np.zeros((nrof_folds,nrof_thresholds))
@@ -442,6 +442,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame, nrof_fold
         dist = distance(embeddings1-mean, embeddings2-mean, distance_metric)
         
         # Find the best threshold for the fold
+        # 探索最优阈值，并用10折交叉验证检验结果
         acc_train = np.zeros((nrof_thresholds))
         for threshold_idx, threshold in enumerate(thresholds):
             _, _, acc_train[threshold_idx] = calculate_accuracy(threshold, dist[train_set], actual_issame[train_set])
@@ -473,7 +474,7 @@ def calculate_val(thresholds, embeddings1, embeddings2, actual_issame, far_targe
     assert(embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
     nrof_thresholds = len(thresholds)
-    k_fold = KFold(n_splits=nrof_folds, shuffle=False)
+    k_fold = KFold(n_splits=nrof_folds, shuffle=True)
     
     val = np.zeros(nrof_folds)
     far = np.zeros(nrof_folds)
